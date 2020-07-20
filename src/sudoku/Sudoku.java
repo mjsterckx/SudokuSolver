@@ -142,6 +142,7 @@ public class Sudoku {
 
     Sudoku solve() {
         try {
+            if (findConflicts()) throw new NullPointerException();
             boolean completed;
             do {
                 optimizePossibilities();
@@ -199,6 +200,30 @@ public class Sudoku {
 //        }
 //        return true;
 //    }
+
+    private boolean findConflicts() {
+        for (int i = 0; i < sudokuHeight; i++) {
+            for (int j = 0; j < sudokuWidth; j++) {
+                int n = sudokuMatrix[i][j];
+                if (n > 0) {
+                    for (int r = i; r < sudokuHeight; r++) {
+                        if (sudokuMatrix[r][j] == n && r != i) return true;
+                    }
+                    for (int c = j; c < sudokuWidth; c++) {
+                        if (sudokuMatrix[i][c] == n && c != j) return true;
+                    }
+                    int r = (i / blockHeight) * blockHeight;
+                    int c = (j / blockWidth) * blockWidth;
+                    for (int k = r; k < r + blockHeight; k++) {
+                        for (int l = c; l < c + blockWidth; l++) {
+                            if (sudokuMatrix[k][l] == n && !(k == i && l == j)) return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
 
     public String toString() {
         StringBuilder builder = new StringBuilder();
